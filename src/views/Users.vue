@@ -2,7 +2,7 @@
   <div>
     <p class="name">{{ userData.name }}さんようこそ</p>
     <p class="Wallet">残高:{{ userData.wallet }}</p>
-
+    <button @click="logout()">ログアウト</button>
     <h1>ユーザー覧</h1>
 
     <table>
@@ -25,14 +25,32 @@ export default {
   },
 
   created: function() {
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((doc) => {
-        this.userData = doc.data();
-      });
+    if (firebase.auth().currentUser == null) {
+      this.$router.push('/');
+    } else {
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .get()
+        .then((doc) => {
+          this.userData = doc.data();
+        })
+        .catch(() => {
+          this.$router.push('/');
+        });
+    }
+  },
+  methods: {
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.userData = {};
+          this.$router.push('/');
+        });
+    },
   },
 };
 </script>

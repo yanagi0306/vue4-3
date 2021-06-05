@@ -51,7 +51,9 @@ export default {
         .then(() => {
           this.$router.push('/Users');
         })
-        .catch();
+        .catch(() => {
+          this.$router.push('/');
+        });
     },
   },
 };
