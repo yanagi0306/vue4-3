@@ -36,7 +36,9 @@
           />
         </li>
       </ul>
+
       <input type="button" value="ログイン" @click="signUp" /><br />
+
       <router-link to="/">ログインはこちらから</router-link>
     </form>
   </div>
@@ -55,11 +57,23 @@ export default {
   },
   methods: {
     signUp() {
+      const user = {
+        name: this.name,
+        mailaddress: this.mailaddress,
+        wallet: 1000,
+      };
+      const users = firebase.firestore().collection('users');
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.mailaddress, this.password)
         .then(() => {
-          
+          users
+            .doc(firebase.auth().currentUser.uid)
+            .set(user)
+            .then(() => {
+              this.$router.push('/Users');
+            })
+            .catch(() => {});
         });
     },
   },
