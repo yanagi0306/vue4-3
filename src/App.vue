@@ -12,8 +12,8 @@
   text-align: center;
 }
 img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
 }
 .copy {
   color: #99a2b0;

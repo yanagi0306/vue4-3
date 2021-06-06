@@ -1,9 +1,9 @@
 <template>
   <div>
-    <p>nameさんようこそ</p>
-    <p class="Wallet">残高:</p>
-    <input type="button" value="ログアウト" />
-    <h2>ユーザー覧</h2>
+    <p class="name">{{ userData.name }}さんようこそ</p>
+    <p class="Wallet">残高:{{ userData.wallet }}</p>
+    <button @click="logout()">ログアウト</button>
+    <h1>ユーザー覧</h1>
 
     <table>
       <tr>
@@ -13,10 +13,62 @@
   </div>
 </template>
 
-<script></script>
+//
+<script>
+import firebase from 'firebase';
+export default {
+  data() {
+    return {
+      userData: {},
+    };
+  },
+
+  created: function() {
+    if (firebase.auth().currentUser == null) {
+      this.$router.push('/');
+    } else {
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .get()
+        .then((doc) => {
+          this.userData = doc.data();
+        })
+        .catch(() => {
+          this.$router.push('/');
+        });
+    }
+  },
+  methods: {
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push('/');
+        });
+    },
+  },
+  beforeRouterLeave(to, from, next) {
+    this.userData = {};
+    next();
+  },
+};
+</script>
 
 <style scoped>
+p {
+  display: inline-block;
+  vertical-align: middle;
+}
+h1 {
+  clear: left;
+}
+.name {
+  margin-right: 150px;
+}
 .Wallet {
-  text-align: left;
+  margin-left: 100px;
 }
 </style>

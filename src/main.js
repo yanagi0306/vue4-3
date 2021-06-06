@@ -9,8 +9,6 @@ firebase.initializeApp(firebaseConfig);
 Vue.config.productionTip = false
 
 
-// Initialize Firebase
-
 
 new Vue({
   router,

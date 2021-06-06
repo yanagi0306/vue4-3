@@ -26,7 +26,9 @@
           />
         </li>
       </ul>
+
       <input type="button" value="ログイン" @click="login()" /><br />
+
       <router-link to="/signup">新規登録はこちらから</router-link>
     </form>
   </div>
@@ -46,10 +48,10 @@ export default {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.mailaddress, this.password)
-        .then(function(user){
-          console.log(user)
+        .then(() => {
+          this.$router.push('/Users');
         })
-        .catch();
+        .catch(() => {});
     },
   },
 };
