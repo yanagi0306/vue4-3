@@ -16,7 +16,6 @@
 //
 <script>
 import firebase from 'firebase';
-
 export default {
   data() {
     return {
@@ -47,10 +46,13 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.userData = {};
           this.$router.push('/');
         });
     },
+  },
+  beforeRouterLeave(to, from, next) {
+    this.userData = {};
+    next();
   },
 };
 </script>

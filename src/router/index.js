@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
 import Users from '../views/Users.vue'
+import firebase from 'firebase'
 
 Vue.use(VueRouter)
 
@@ -20,7 +21,14 @@ const routes = [
   {
     path: '/Users',
     name: 'Users',
-    component: Users
+    component: Users,
+    beforeEnter(to, from, next) {
+      if (firebase.auth().currentUser == null) {
+        next(false)
+      } else {
+        next()
+      }
+    }
   },
 
 ]
