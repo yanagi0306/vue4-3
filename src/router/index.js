@@ -24,7 +24,7 @@ const routes = [
     component: Users,
     beforeEnter(to, from, next) {
       if (firebase.auth().currentUser == null) {
-        next(false)
+        this.$router.push('/');
       } else {
         next()
       }

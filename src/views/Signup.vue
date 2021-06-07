@@ -61,12 +61,14 @@ export default {
         name: this.name,
         mailaddress: this.mailaddress,
         wallet: 1000,
+        uid: '',
       };
       const users = firebase.firestore().collection('users');
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.mailaddress, this.password)
         .then(() => {
+          user.uid = firebase.auth().currentUser.uid;
           users
             .doc(firebase.auth().currentUser.uid)
             .set(user)
