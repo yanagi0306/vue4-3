@@ -45,8 +45,8 @@ export default {
   },
 
   methods: {
-    openWallet(i) {
-      this.viewData = i;
+    openWallet(user) {
+      this.viewData = user;
       this.showContent = true;
     },
     closeWallet() {
