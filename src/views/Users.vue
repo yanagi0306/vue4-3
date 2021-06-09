@@ -18,6 +18,7 @@
 
     <UserWallet :user="user" v-show="viewContent" v-on:close-click="closeWallet"></UserWallet>
     <SendWallet v-on:wallet-click="wallet = $event" v-on:send-click="sendWallet" :myData="myData" v-show="sendContent"></SendWallet>
+    
   </div>
 </template>
 
