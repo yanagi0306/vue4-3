@@ -16,12 +16,19 @@
       </tr>
     </table>
 
-    <UserWallet :user="user" v-show="viewContent" v-on:close-click="closeWallet"></UserWallet>
-    <SendWallet v-on:wallet-click="wallet = $event" v-on:send-click="sendWallet" :myData="myData" v-show="sendContent"></SendWallet>
-    
+    <UserWallet
+      :user="user"
+      v-show="viewContent"
+      v-on:close-click="closeWallet"
+    ></UserWallet>
+    <SendWallet
+      v-on:wallet-click="wallet = $event"
+      v-on:send-click="sendWallet"
+      :myData="myData"
+      v-show="sendContent"
+    ></SendWallet>
   </div>
 </template>
-
 
 <script>
 import firebase from 'firebase';
@@ -57,22 +64,18 @@ export default {
       this.sendContent = true;
     },
     sendWallet() {
+      const batch = firebase.firestore().batch();
+      const myfb = this.fb(this.myData.uid);
+      const userfb = this.fb(this.user.uid);
+
       if (this.myData.wallet >= this.wallet) {
-        this.fb(this.myData.uid)
-          .update({
-            wallet: this.myData.wallet - this.wallet,
-          })
-          .then(() => {
-            this.fb(this.user.uid)
-              .update({
-                wallet: this.user.wallet + this.wallet,
-              })
-              .then(() => {
-                this.usersData = [];
-                this.reload();
-                this.sendContent = false;
-              });
-          });
+        batch.update(myfb, { wallet: this.myData.wallet - this.wallet });
+        batch.update(userfb, { wallet: this.user.wallet + this.wallet });
+        batch.commit().then(() => {
+          this.usersData = [];
+          this.sendContent = false;
+          this.reload();
+        });
       }
     },
 
