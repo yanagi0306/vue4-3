@@ -12,30 +12,41 @@
       <tr v-for="user in usersData" :key="user.id">
         <td>{{ user.name }}</td>
         <td><button @click="openWallet(user)">walletを見る</button></td>
-        <td><button>送る</button></td>
+        <td><button @click="openSend(user)">送る</button></td>
       </tr>
     </table>
 
-    <UserWallet :user="user" v-show="viewContent" v-on:close-click="closeWallet"></UserWallet>
-
-   
+    <UserWallet
+      :user="user"
+      v-show="viewContent"
+      v-on:close-click="closeWallet"
+    ></UserWallet>
+    <SendWallet
+      v-on:wallet-click="wallet = $event"
+      v-on:send-click="sendWallet"
+      :myData="myData"
+      v-show="sendContent"
+    ></SendWallet>
   </div>
 </template>
 
-//
 <script>
 import firebase from 'firebase';
 import UserWallet from '../components/UserWallet.vue';
-
+import SendWallet from '../components/SendWallet.vue';
 
 export default {
-  components: { UserWallet },
+  components: {
+    UserWallet,
+    SendWallet,
+  },
   data() {
     return {
       myData: {},
       usersData: [],
       user: {},
       viewContent: false,
+      sendContent: false,
       wallet: '',
     };
   },
@@ -48,6 +59,26 @@ export default {
     closeWallet() {
       this.viewContent = false;
     },
+    openSend(user) {
+      this.user = user;
+      this.sendContent = true;
+    },
+    sendWallet() {
+      const batch = firebase.firestore().batch();
+      const myfb = this.fb(this.myData.uid);
+      const userfb = this.fb(this.user.uid);
+
+      if (this.myData.wallet >= this.wallet) {
+        batch.update(myfb, { wallet: this.myData.wallet - this.wallet });
+        batch.update(userfb, { wallet: this.user.wallet + this.wallet });
+        batch.commit().then(() => {
+          this.usersData = [];
+          this.sendContent = false;
+          this.reload();
+        });
+      }
+    },
+
     fb(uid) {
       return firebase
         .firestore()
@@ -68,7 +99,10 @@ export default {
       if (firebase.auth().currentUser == null) {
         this.$router.push('/');
       } else {
-        this.fb(firebase.auth().currentUser.uid)
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(firebase.auth().currentUser.uid)
           .get()
           .then((doc) => {
             this.myData = doc.data();
