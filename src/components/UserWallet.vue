@@ -13,11 +13,11 @@
 </template>
 <script>
 export default {
-  props: ['user'],
-
+  props:['user'],
+  
   methods: {
     closeWallet() {
-      this.$emit('close-click');
+      this.$emit('close-click')
     },
   },
 };
